@@ -9,28 +9,34 @@ namespace OCA\SingleSignOn;
 class WebDavAuthInfo implements IWebDavAuthInfo
 {
     /**
-     * undocumented function
+     * requeir keys for auth info
      *
-     * @return void
+     * @var array
      */
-    public static function init($userID, $password)
-    {
-        
-    }
-    
+    private static $requireKeys = array("userid", "password");
+
+    /**
+     * auth info
+     *
+     * @var array
+     */
+    private static $info = array();
+
     /**
      * Getter for Info
      *
      * @return array
      */
-    public static function get()
+    public static function get($userID, $password)
     {
-        foreach (AuthInfo::$requireKeys as $key) {
+        self::$info["userid"] = $userID;
+        self::$info["password"] = $password;
+
+        foreach (self::$requireKeys as $key) {
             if(!array_key_exists($key, self::$info)) {
                 return null;
             }
         }
         return self::$info;
     }
-    
 }
