@@ -3,6 +3,7 @@ namespace OCA\SingleSignOn;
 
 class GetInfo implements IUserInfoRequest {
     private $connection;
+    private $setupParams = array();
     private $userId;
     private $email;
     private $groups = array();
@@ -19,14 +20,35 @@ class GetInfo implements IUserInfoRequest {
         return ISingleSignOnRequest::INFO;
     }
 
+    /**
+     * setup userinfo
+     *
+     * @param array $param
+     * @return void
+     */
+    public function setup($params)
+    {
+        foreach ($params as $key => $value) {
+            $this->setupParams[$key] = $value;
+        }
+    }
+
     public function send($data = null) {
         $serverConnection = $this->connection->getConnection();
         $serverUrl = $this->connection->getServerUrl();
-        $param = array("cmd" => "check_key", 
-                       "userid" => $data["userid"],
-                       "key" => $data["key"]);
 
-        $url = $serverUrl . "?" . http_build_query($param);
+        $params["userid"] = $data["userid"];
+
+        if ($this->setupParams["action"] == "webDavLogin") {
+            $params["cmd"] = "check_pwd";
+            $params["passwd"] = $data["password"];
+        }
+        else {
+            $params["cmd"] = "ckech_key";
+            $params["key"] = $data["key"];
+        }
+
+        $url = $serverUrl . "?" . http_build_query($params);
 
         curl_setopt($serverConnection, CURLOPT_URL, $url);
         $result = curl_exec($serverConnection);
@@ -43,6 +65,7 @@ class GetInfo implements IUserInfoRequest {
         $this->displayName = $userInfo["name"];
         $this->sid = $userInfo["sid"];
         $this->openID = $userInfo["openid"];
+        $this->token = $this->setupParams["action"] === "webDavLogin" ? $data["password"] : $data["key"];
         //$this->userGroup = $info->UserGroup;
 
         return true;
@@ -68,6 +91,15 @@ class GetInfo implements IUserInfoRequest {
         return $this->displayName;
     }
 
+    /**
+     * Get user auth token
+     *
+     * @return string $token
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
 
     /**
      * Getter for user region
