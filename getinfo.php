@@ -44,7 +44,7 @@ class GetInfo implements IUserInfoRequest {
             $params["passwd"] = $data["password"];
         }
         else {
-            $params["cmd"] = "ckech_key";
+            $params["cmd"] = "check_key";
             $params["key"] = $data["key"];
         }
 
