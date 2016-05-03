@@ -53,8 +53,45 @@ class GetInfo implements IUserInfoRequest {
         curl_setopt($serverConnection, CURLOPT_URL, $url);
         $result = curl_exec($serverConnection);
         $result = json_decode($result, true);
+        $statusCode = (int)$result["retcode"];
 
-        if ($result["retcode"] != 0) {
+        if ($statusCode != 0) {
+            if($this->setupParams["action"] == "webDavLogin") {
+                switch ($statusCode) {
+                    case 1:
+                        $errorMsg = "Missing parameter 'password'";
+                        break;
+                    case 2:
+                        $errorMsg = "Missing parameter 'userid'";
+                        break;
+                    case 3:
+                        $errorMsg = "Userid not exsit";
+                        break;
+                    case 4:
+                        $errorMsg = "Verification failed";
+                        break;
+                }
+            }
+            else {
+                switch ($statusCode) {
+                    case 1:
+                        $errorMsg = "Missing parameter 'key'";
+                        break;
+                    case 2:
+                        $errorMsg = "Error format of parameter 'key'";
+                        break;
+                    case 3:
+                        $errorMsg = "Missing parameter 'userid'";
+                        break;
+                    case 4:
+                        $errorMsg = "Userid not exsit";
+                        break;
+                    case 5:
+                        $errorMsg = "Verification failed";
+                        break;
+                }
+            }
+            $this->errorMsg = $errorMsg;
             return false;
         }
 
@@ -122,4 +159,15 @@ class GetInfo implements IUserInfoRequest {
 
         return true;
     }
+
+    /**
+     * Check has error massage or not
+     *
+     * @return true|false
+     */
+    public function hasErrorMsg()
+    {
+        return $this->errorMsg ? true : false;
+    }
+    
 }
