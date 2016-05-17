@@ -12,7 +12,7 @@ class RedirectRegion implements IRedirectRegion{
 
         $regionNum = $regions[$region] == "north" ? "1" : "2";
 
-        preg_match("(.*\/webdav.*)", $requestUri, $matches);
+        preg_match("/(.*\/ocs\/.*)|(.*\/webdav.*)/", $requestUri, $matches);
 
         if(count($matches)){
             $url = $request->getServerProtocol() . "://" . $config->getValue("sso_owncloud_url")[$regions[$region]] . $requestUri;
@@ -23,6 +23,7 @@ class RedirectRegion implements IRedirectRegion{
 
             $url = $config->getValue("sso_login_url") . "?" . http_build_query($params);
         }
+
         return $url;
     }
 }
