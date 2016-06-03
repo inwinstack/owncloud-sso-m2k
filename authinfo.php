@@ -48,6 +48,11 @@ class AuthInfo implements IAuthInfo
                 return null;
             }
         }
+
+        if(\OC_User::getUser() != self::$info["userid"]) {
+            \OC_User::logout();
+        }
+
         return self::$info;
     }
     
