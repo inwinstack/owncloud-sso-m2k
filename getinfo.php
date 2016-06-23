@@ -97,7 +97,10 @@ class GetInfo implements IUserInfoRequest {
 
         $userInfo = $result["user_info"];
 
-        $this->userId = $data["userid"];
+        $matches = array();
+        preg_match("/.*@.*/", $data["userid"], $matches);
+
+        $this->userId = count($matches) ? $data["userid"] : $data["userid"] . "@mail.edu.tw";
         $this->email = $data["userid"];
         $this->displayName = $userInfo["name"];
         $this->sid = $userInfo["sid"];
