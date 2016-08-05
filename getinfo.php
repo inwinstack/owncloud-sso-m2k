@@ -2,6 +2,11 @@
 namespace OCA\SingleSignOn;
 
 class GetInfo implements IUserInfoRequest {
+    public static $teacherRole = array("校長",
+                                       "教師",
+                                       "職員",
+                                       "縣市管理者",
+                                       "學校管理者");
     private $connection;
     private $setupParams = array();
     private $userId;
@@ -11,6 +16,7 @@ class GetInfo implements IUserInfoRequest {
     private $displayName;
     private $errorMsg;
     private $sid;
+    private $title = array();
 
     public function __construct($connection){
         $this->connection = $connection;
@@ -106,7 +112,12 @@ class GetInfo implements IUserInfoRequest {
         $this->sid = $userInfo["sid"];
         $this->openID = $userInfo["openid"];
         $this->token = $this->setupParams["action"] === "webDavLogin" ? $data["password"] : $data["key"];
-        //$this->userGroup = $info->UserGroup;
+        $titleStr = json_decode($userInfo["titleStr"])[0];
+        foreach ($titleStr as $item) {
+            foreach ($item->title as $title) {
+                $this->title[] = $title;
+            }
+        }
 
         return true;
     }
@@ -171,6 +182,21 @@ class GetInfo implements IUserInfoRequest {
     public function hasErrorMsg()
     {
         return $this->errorMsg ? true : false;
+    }
+    
+    /**
+     * Get user role in this system
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        foreach ($this->title as $title) {
+            if (in_array($title, self::$teacherRole)) {
+                return \OC::$server->getSystenConfig()->getVale("sso_advance_group", NUll);
+            }
+        }
+        return "stutent";
     }
     
 }
