@@ -193,7 +193,7 @@ class GetInfo implements IUserInfoRequest {
     {
         foreach ($this->title as $title) {
             if (in_array($title, self::$teacherRole)) {
-                return \OC::$server->getSystenConfig()->getVale("sso_advance_group", NUll);
+                return \OC::$server->getSystemConfig()->getValue("sso_advance_user_group", NUll);
             }
         }
         return "stutent";
