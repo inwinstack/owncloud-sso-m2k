@@ -15,14 +15,20 @@ class UserInfoSetter
      */
     public static function setInfo($user, $userInfo)
     {
+        $config = \OC::$server->getConfig();
+
+        if ($config->getUserValue($userID, "setting", "role") != NULL) {
+            return;
+        }
+
         $userID = $userInfo->getUserId();
         $advanceGroup = \OC::$server->getSystemConfig()->getValue("sso_advance_user_group", NULL);
 
         \OC_User::setDisplayName($userID, $userInfo->getDisplayName());
-        \OC::$server->getConfig()->setUserValue($userID, "settings", "email", $userInfo->getEmail());
+        $config->setUserValue($userID, "settings", "email", $userInfo->getEmail());
 
         if ($userInfo->getRole() === $advanceGroup) {
-            \OC::$server->getConfig()->setUserValue($userID, "settings", "role", $userInfo->getRole());
+            $config->setUserValue($userID, "settings", "role", $userInfo->getRole());
             $group = \OC::$server->getGroupManager()->get($advanceGroup);
             if(!$group) {
                 $group = \OC::$server->getGroupManager()->createGroup($advanceGroup);
