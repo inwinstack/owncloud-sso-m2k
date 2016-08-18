@@ -16,12 +16,12 @@ class UserInfoSetter
     public static function setInfo($user, $userInfo)
     {
         $config = \OC::$server->getConfig();
+        $userID = $userInfo->getUserId();
 
         if ($config->getUserValue($userID, "setting", "role") != NULL) {
             return;
         }
 
-        $userID = $userInfo->getUserId();
         $advanceGroup = \OC::$server->getSystemConfig()->getValue("sso_advance_user_group", NULL);
 
         \OC_User::setDisplayName($userID, $userInfo->getDisplayName());
