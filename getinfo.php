@@ -112,7 +112,7 @@ class GetInfo implements IUserInfoRequest {
         $this->sid = $userInfo["sid"];
         $this->openID = $userInfo["openid"];
         $this->token = $this->setupParams["action"] === "webDavLogin" ? $data["password"] : $data["key"];
-        $titleStr = json_decode($userInfo["titleStr"])[0];
+        $titleStr = json_decode($userInfo["titleStr"]);
         foreach ($titleStr as $item) {
             foreach ($item->title as $title) {
                 $this->title[] = $title;
