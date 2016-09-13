@@ -18,7 +18,7 @@ class UserInfoSetter
         $config = \OC::$server->getConfig();
         $userID = $userInfo->getUserId();
 
-        if ($config->getUserValue($userID, "setting", "role") != NULL) {
+        if ($config->getUserValue($userID, "setting", "role") != NULL && $config->getUserValue($userID, "files", "quota") == "15 GB") {
             return;
         }
 
@@ -29,11 +29,17 @@ class UserInfoSetter
 
         if ($userInfo->getRole() === $advanceGroup) {
             $config->setUserValue($userID, "settings", "role", $userInfo->getRole());
+            $config->setUserValue($userID, "files", "quota", "15 GB");
+
             $group = \OC::$server->getGroupManager()->get($advanceGroup);
             if(!$group) {
                 $group = \OC::$server->getGroupManager()->createGroup($advanceGroup);
             }
             $group->addUser($user);
+
+            if ($config->getUserValue($userID, "firstrunwizard", "show", "1") === "0") {
+                $config->sertUserValue($userID, "teacher_notification", "notification", "1");
+            }
         }
     }
     
