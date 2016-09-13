@@ -38,7 +38,7 @@ class UserInfoSetter
             $group->addUser($user);
 
             if ($config->getUserValue($userID, "firstrunwizard", "show", "1") === "0") {
-                $config->sertUserValue($userID, "teacher_notification", "notification", "1");
+                $config->setUserValue($userID, "teacher_notification", "notification", "1");
             }
         }
     }
